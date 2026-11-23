@@ -1,0 +1,127 @@
+### Ekstensi VS Code: "REST Client" (humao.rest-client). Klik "Send Request".
+@host = http://localhost:3000
+
+### ===== SOAL 1 =====
+GET {{host}}/bilangan/12
+###
+GET {{host}}/bilangan/15
+### error 400
+GET {{host}}/bilangan/abc
+###
+GET {{host}}/bilangan/0
+###
+GET {{host}}/bilangan/150
+###
+GET {{host}}/bilangan/3.5
+
+### ===== SOAL 2 =====
+GET {{host}}/suhu/konversi?nilai=100&dari=celsius&ke=fahrenheit
+###
+GET {{host}}/suhu/konversi?nilai=32&dari=fahrenheit&ke=kelvin
+###
+GET {{host}}/suhu/konversi?nilai=300&dari=kelvin&ke=celsius
+### error 400
+GET {{host}}/suhu/konversi?nilai=100&dari=celsius
+###
+GET {{host}}/suhu/konversi?nilai=abc&dari=celsius&ke=kelvin
+###
+GET {{host}}/suhu/konversi?nilai=10&dari=celsius&ke=celsius
+###
+GET {{host}}/suhu/konversi?nilai=-5&dari=kelvin&ke=celsius
+###
+GET {{host}}/suhu/konversi?nilai=10&dari=rankine&ke=celsius
+
+### ===== SOAL 3 =====
+GET {{host}}/deret/ganjil?jumlah=5
+###
+GET {{host}}/deret/genap?jumlah=3
+###
+GET {{host}}/deret/kuadrat?jumlah=4
+### tantangan
+GET {{host}}/deret/genap?jumlah=3&urutan=desc
+### error 400
+GET {{host}}/deret/prima?jumlah=5
+###
+GET {{host}}/deret/ganjil
+###
+GET {{host}}/deret/ganjil?jumlah=21
+###
+GET {{host}}/deret/ganjil?jumlah=2.5
+###
+GET {{host}}/deret/ganjil?jumlah=3&urutan=acak
+
+### ===== SOAL 4 =====
+POST {{host}}/nilai/hitung
+Content-Type: application/json
+
+{ "nama": "Budi", "tugas": [80, 90, 70], "uts": 75, "uas": 85 }
+
+### error 400: nama kosong
+POST {{host}}/nilai/hitung
+Content-Type: application/json
+
+{ "nama": "   ", "tugas": [80], "uts": 75, "uas": 85 }
+
+### error 400: tugas bukan array
+POST {{host}}/nilai/hitung
+Content-Type: application/json
+
+{ "nama": "Budi", "tugas": 80, "uts": 75, "uas": 85 }
+
+### error 400: nilai di luar 0-100
+POST {{host}}/nilai/hitung
+Content-Type: application/json
+
+{ "nama": "Budi", "tugas": [80, 120], "uts": 75, "uas": 85 }
+
+### error 400: uts bukan angka
+POST {{host}}/nilai/hitung
+Content-Type: application/json
+
+{ "nama": "Budi", "tugas": [80], "uts": "75", "uas": 85 }
+
+### ===== SOAL 5 =====
+POST {{host}}/kasir/checkout/gold?metode=qris
+Content-Type: application/json
+
+{
+  "items": [
+    { "nama": "Buku Tulis", "harga": 5000, "qty": 10 },
+    { "nama": "Pulpen", "harga": 3000, "qty": 5 }
+  ]
+}
+
+### tunai, member silver (case-insensitive)
+POST {{host}}/kasir/checkout/SILVER?metode=tunai
+Content-Type: application/json
+
+{ "items": [ { "nama": "Penggaris", "harga": 4000, "qty": 2 } ] }
+
+### error 400: qty salah di item ke-2
+POST {{host}}/kasir/checkout/gold?metode=qris
+Content-Type: application/json
+
+{
+  "items": [
+    { "nama": "Buku Tulis", "harga": 5000, "qty": 10 },
+    { "nama": "Pulpen", "harga": 3000, "qty": 1.5 }
+  ]
+}
+
+### error 400: member salah
+POST {{host}}/kasir/checkout/platinum?metode=qris
+Content-Type: application/json
+
+{ "items": [ { "nama": "A", "harga": 1000, "qty": 1 } ] }
+
+### error 400: metode tidak ada
+POST {{host}}/kasir/checkout/gold
+Content-Type: application/json
+
+{ "items": [ { "nama": "A", "harga": 1000, "qty": 1 } ] }
+
+### error 400: items kosong
+POST {{host}}/kasir/checkout/gold?metode=tunai
+Content-Type: application/json
+
+{ "items": [] }
